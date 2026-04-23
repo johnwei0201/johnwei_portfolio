@@ -1,0 +1,981 @@
+/*檢查用*/
+/* * {
+  outline: 1px solid red;
+} */
+
+@font-face {
+  font-family: "zpix";
+  src: url("./assets/fonts/zpix.ttf") format("truetype");
+  font-display: swap;
+}
+body {
+  font-family: "zpix", sans-serif;
+  color: white;
+}
+html,
+body {
+  font-family: "zpix", sans-serif;
+  scroll-behavior: smooth;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-image: url(./assets/img/background.png);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center top;
+}
+
+/* 星際背景 */
+.parallax {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background-image:
+    url(./assets/img/spaceship_1.png), url(./assets/img/spaceship_2.png),
+    url(./assets/img/bg_First_layer.png),
+    url(./assets/img/bg_Second_layerr.png), url(./assets/img/bg_Third_layer.png);
+  background-repeat: no-repeat;
+  background-size:
+    5% auto,
+    3% auto,
+    80% auto,
+    50% auto,
+    70% auto;
+  background-position:
+    left 8% top 100vh,
+    right 8% top 120vh,
+    center 100vh,
+    center 0px,
+    center 0px;
+  background-attachment: local, local, local, local, local;
+}
+
+.container {
+  width: 100%;
+  /* 最底層的宇宙大背景 */
+  background-image: url(./assets/img/background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 0px;
+  background-attachment: fixed;
+  display: block;
+  min-height: 100vh;
+  max-width: 1200px;
+
+  margin: 0 auto;
+}
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 22px;
+  z-index: 30;
+
+  cursor: pointer;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* 漢堡 */
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #fff;
+  margin-bottom: 5px;
+  border-radius: 2px;
+}
+/* content 區塊 */
+.content {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  padding: 40px 0;
+}
+
+/* 黑底圖 */
+/* .content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.8) 20%,
+    rgba(0, 0, 0, 0.8) 80%,
+    transparent 100%
+  );
+
+  z-index: -1;
+  pointer-events: none;
+} */
+#portfolio {
+  scroll-margin-top: -200px;
+}
+#hero {
+  position: relative;
+}
+/* nav 區塊 */
+.nav_zone {
+  width: 100%;
+  position: absolute;
+  inset: 0;
+}
+.nav_ul {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+
+  /* nav 上下移動動畫 */
+  transition: top 0s;
+}
+
+/* nav 吸頂 */
+.nav_zone.sticky-active .nav_ul {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+/*nav 選項箭頭*/
+.nav_ul::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 0px;
+  height: 20px;
+  width: 20px;
+  z-index: 50;
+  background-image: url(./assets/img/arrow.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transform: translate(var(--arrow-x, 0), var(--arrow-y, 0)) translateY(-50%);
+  transition: transform 0s ease;
+  animation: arrowBlink 0.5s infinite;
+}
+.nav_ul::after {
+  content: "";
+  position: absolute;
+  inset: 0; /* 等於 top:0 left:0 right:0 bottom:0 */
+
+  background: rgb(0, 0, 0);
+  border-radius: 5px;
+
+  z-index: -1;
+}
+
+.nav_ul a {
+  color: #fff;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 1);
+  text-decoration: none;
+  font-size: 19px;
+  line-height: 2.3rem;
+  line-height: 33px;
+}
+.nav_li > a:hover {
+  color: #e3db6c;
+}
+.nav_li {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+
+  list-style: none;
+  padding: 0;
+}
+.dropdown li a:hover {
+  color: #e3db6c;
+}
+/* 下拉式選單 */
+.nav_li.active .dropdown {
+  display: block;
+}
+/*箭頭目前指到誰*/
+.nav_li.active > a {
+  color: #e3db6c;
+}
+.dropdown li.active > a {
+  color: #e3db6c;
+}
+
+h1 {
+  font-size: 2rem;
+  letter-spacing: 5px;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+#hero {
+  width: 100%;
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo img {
+  width: 450px;
+  display: block;
+  margin: 0 auto;
+}
+
+.arcade {
+  position: absolute;
+  width: 25%;
+  bottom: 5%;
+}
+.game_left {
+  left: 5%;
+}
+.game_right {
+  right: 5%;
+}
+
+.player_select {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.player_select p:hover {
+  color: #e3db6c;
+}
+.player_item {
+  position: relative;
+  color: #e2e2e2;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  cursor: pointer;
+  padding-left: 30px;
+}
+/* 遊戲選項箭頭 */
+.player_item::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 20%;
+  transform: translate(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: url(./assets//img/small\ plane.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  animation: arrowBlink 0.5s infinite;
+}
+/* 被選中 → 顯示顏色 */
+.player_item.active {
+  color: #e3db6c;
+}
+/*當擁有 active 類別時，強制顯示*/
+.player_item.active::before {
+  visibility: visible;
+  animation: arrowBlink 0.5s infinite;
+}
+/* 關於我 區塊*/
+.about_wrapper {
+  width: 80%;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.about_title {
+  text-align: center;
+}
+.about_title img {
+  width: 220px;
+}
+
+/*about 上半部*/
+
+.about_top {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  gap: 8%;
+}
+.about_photo {
+  width: 30%;
+}
+
+.about_skills {
+  width: 50%;
+}
+
+.photo_img img {
+  width: 100%;
+  display: block;
+}
+.photo_info {
+  font-size: 25px;
+  margin-top: 5px;
+  line-height: 1.3;
+}
+.skill_item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+.skill_item span {
+  font-size: 25px;
+  width: 120px;
+  padding-right: 145px;
+}
+.skill_item > img {
+  width: 60%;
+}
+/*about下半部*/
+.about_bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.about_block {
+  font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+  width: 100%;
+  position: relative;
+  padding: 10px 10px;
+  border-radius: 12px;
+  margin: 0 auto;
+
+  /*about外框 */
+  border: 2px solid #7a3cff;
+  box-shadow:
+    0 0 10px rgba(122, 60, 255, 0.6),
+    inset 0 0 20px rgba(122, 60, 255, 0.2);
+
+  /*about背景 */
+  background: linear-gradient(180deg, #1a0033 0%, #0d001a 100%);
+}
+
+.about_block::before {
+  content: "";
+  position: absolute;
+  inset: -4px; /* 往外擴 */
+  border-radius: 14px;
+  border: 2px solid rgba(122, 60, 255, 0.4);
+  filter: blur(4px);
+  z-index: -1;
+}
+
+.about_block h2 {
+  font-size: 25px;
+  color: #e3db6c;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.about_item {
+  display: flex;
+  margin-bottom: 20px;
+}
+.about_item p {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.about_date {
+  width: 25%;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.about_text {
+  width: 75%;
+  margin-bottom: 10px;
+}
+.about_text h3 {
+  color: #e3db6c;
+  margin: 10px 0;
+  font-size: 22px;
+}
+.job_title {
+  font-size: 20px;
+  margin-left: 3px;
+}
+
+/* 輪播圖 區塊 */
+.arcade_frame {
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.arcade_img {
+  width: 100%;
+  display: block;
+}
+/* 套在輪播圖上的輪播 */
+.carousel {
+  position: absolute;
+  top: 19%;
+  left: 13%;
+  width: 74%;
+  height: 40%;
+
+  overflow: hidden;
+  border-radius: 12px;
+}
+.carousel_track {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: 100%;
+}
+
+.carousel_track img {
+  flex: 0 0 100%;
+  min-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 輪播圖左右按鈕 */
+.carousel_btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.carousel_btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.prev {
+  left: 5px;
+}
+.next {
+  right: 5px;
+}
+/* 連絡資訊 區塊*/
+
+.contact_wrapper {
+  width: 70%;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.contact_title img {
+  width: 300px;
+}
+
+.contact_info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact_item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 20px;
+}
+
+.contact_item img {
+  width: 35px;
+  height: 35px;
+}
+
+.contact_item a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.contact_item a:hover {
+  color: #e3db6c;
+}
+
+/* 表單 */
+/* 表單整體 */
+.contact_form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* input / textarea 共用樣式 */
+.contact_form input,
+.contact_form textarea {
+  width: 70%;
+  margin: 0 auto;
+  padding: 15px 20px;
+  font-family: "zpix", sans-serif;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(40, 0, 60, 0.4);
+  border: 2px solid #3a3cff;
+  border-radius: 12px;
+  outline: none;
+
+  box-shadow:
+    0 0 10px rgba(58, 60, 255, 0.5),
+    inset 0 0 10px rgba(58, 60, 255, 0.2);
+
+  transition: 0.2s;
+}
+
+/* focus 發光效果 */
+.contact_form input:focus,
+.contact_form textarea:focus {
+  border-color: #441dd1;
+  box-shadow:
+    0 0 15px rgba(42, 60, 200, 0.8),
+    inset 0 0 10px rgba(70, 60, 255, 0.4);
+}
+
+/* textarea 高度 */
+.contact_form textarea {
+  height: 200px;
+  resize: none;
+}
+
+/* 送出按鈕*/
+.submit_btn {
+  width: 200px;
+  padding: 12px;
+  font-family: "zpix", sans-serif;
+  font-size: 18px;
+  color: #fff;
+  background: linear-gradient(180deg, #3638c0, #202067);
+  border: 0.5px solid #3c56ff;
+  border-radius: 10px;
+  cursor: pointer;
+
+  box-shadow:
+    0 0 10px rgba(58, 60, 255, 0.6),
+    inset 0 0 10px rgba(122, 60, 255, 0.3);
+
+  transition: 0.2s;
+}
+
+/* hover */
+.submit_btn:hover {
+  background: linear-gradient(180deg, #5a5cff, #2a2aff);
+  box-shadow:
+    0 0 15px rgba(122, 60, 255, 0.9),
+    inset 0 0 10px rgba(122, 60, 255, 0.5);
+}
+
+/* 點擊 */
+.submit_btn:active {
+  transform: scale(0.95);
+}
+
+/* footer 區塊*/
+
+#footer {
+  min-height: 60%;
+  align-items: flex-end;
+  padding-bottom: 20px;
+}
+#footer .content {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+  padding: 96px 0;
+}
+.footer_wrapper {
+  width: 100%;
+  max-width: 1000px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+/* 任天堂飄浮*/
+.footer_console img {
+  display: block;
+  animation: floating 4s ease-in-out infinite;
+}
+
+/* 右把手飄浮 */
+.footer_controller .controller {
+  animation: floating 6s ease-in-out infinite;
+}
+
+/* 左把手飄浮 */
+.footer_controller .controller.left {
+  animation-delay: 0.5s;
+}
+
+.footer_controller .controller.right {
+  animation-delay: 1.2s;
+}
+
+/* Thank you */
+.footer_text p {
+  margin-bottom: 40px;
+  font-size: 30px;
+  color: #e3db6c;
+  letter-spacing: 2px;
+}
+
+/* 手把區 */
+.footer_controller {
+  position: relative;
+  width: 100%;
+  height: 150px;
+}
+
+/* 手把區共用 */
+.controller {
+  position: absolute;
+  width: 180px;
+  top: 0;
+}
+
+/* 左手把 */
+.controller.left {
+  top: -130%;
+  left: 1%;
+  width: 35%;
+  transform: rotate(-20deg);
+  transform: rotate(3deg);
+}
+
+/* 右手把 */
+.controller.right {
+  top: -140%;
+  right: 1%;
+  width: 35%;
+  transform: rotate(20deg);
+  transform: rotate(3deg);
+}
+
+/* 任天堂主機 */
+.footer_console {
+  margin-top: -20px;
+}
+
+.footer_console img {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+}
+
+canvas {
+  background: #000000;
+  border: 15px solid #ffcc00;
+  display: block;
+  margin: 0 auto;
+}
+
+.scroll_hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  z-index: 10;
+
+  animation: scrollFloat 1.5s ease-in-out infinite;
+}
+
+.scroll_hint img {
+  width: 20px;
+  display: block;
+}
+
+/* 向下滾動箭頭指示 */
+@keyframes scrollFloat {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, 10px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/*指示游標閃爍效果*/
+@keyframes arrowBlink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.02;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* 任天堂飄浮動作 */
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/*=== RWD===*/
+
+/* 平板 */
+@media (max-width: 1024px) {
+  .about_wrapper,
+  .contact_wrapper {
+    width: 90%;
+  }
+}
+/* 手機*/
+@media (max-width: 768px) {
+  .content {
+    min-height: auto;
+    padding: 40px 0;
+  }
+  #hero {
+    min-height: auto;
+    padding: 60px 0 120px;
+    min-height: 48vh;
+  }
+  .player_select {
+    top: 65%;
+  }
+
+  .logo img {
+    max-width: 280px;
+  }
+  /*  漢堡顯示 */
+  .hamburger {
+    display: block;
+  }
+
+  .contact_wrapper {
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  /* nav置中彈出*/
+  .nav_ul {
+    position: fixed;
+    top: 33%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 80%;
+    max-width: 300px;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 12px;
+    padding: 20px 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+  }
+
+  /* 打開狀態 */
+  .nav_ul.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* 每個選單 */
+  .nav_li {
+    flex: none; /* 關鍵：取消 flex:1 */
+    width: 100%;
+    text-align: center;
+    margin: 8px 0;
+  }
+
+  .nav_li > a {
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+  /* dropdown 預設隱藏 */
+  .dropdown {
+    display: none;
+    position: static;
+    margin-top: 5px;
+  }
+
+  /* 點擊才展開 */
+  .nav_li.active .dropdown {
+    display: block;
+  }
+
+  /*RWD：技能條排版 */
+  .skill_item {
+    justify-content: center;
+    line-height: 35px;
+  }
+
+  .skill_item span {
+    flex-shrink: 0;
+    padding-left: 0;
+    font-size: 23px;
+  }
+
+  .skill_item > img {
+    width: 50%;
+  }
+  /*  RWD展示作品集的機台 */
+  .arcade_frame {
+    transform: scale(1.3);
+    transform-origin: center center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .footer_console {
+    width: 70%;
+  }
+  #footer {
+    min-height: 40vh;
+    margin-top: -38px;
+  }
+
+  .footer_controller {
+    position: relative;
+    width: 100%;
+    height: 110px;
+  }
+
+  /*==RWD小手機尺寸== */
+
+  @media (max-width: 560px) {
+    .about_wrapper {
+      width: 90%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .about_title img {
+      display: block;
+      max-width: 80%;
+      margin: 0 auto;
+    }
+
+    .about_top {
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .about_photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      width: 80%;
+    }
+
+    .photo_info {
+      text-align: left;
+      line-height: 45px;
+    }
+
+    /* 技能區 */
+    .about_skills {
+      width: 100%;
+    }
+    /* RWD展示作品集的機台 */
+    .arcade_frame {
+      transform: scale(1.3);
+      transform-origin: center center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    .contact_title img {
+      display: block;
+      max-width: 80%;
+      margin: 0 auto;
+    }
+  }
+
+  .controller.left {
+    top: -165%;
+    left: -18%;
+    width: 56%;
+    transform: rotate(-20deg);
+    transform: rotate(3deg);
+  }
+
+  /* 右手把 */
+  .controller.right {
+    top: -175%;
+    right: -18%;
+    width: 55%;
+    transform: rotate(20deg);
+    transform: rotate(3deg);
+  }
+}

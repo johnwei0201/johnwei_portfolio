@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>web_visual_design</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./reset.css" />
+  </head>
+  <style>
+    .back-to-top {
+      position: fixed;
+      right: 60px;
+      bottom: 80px;
+      width: 60px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+      z-index: 999;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(20px);
+    }
+
+    .back-to-top img {
+      width: 100%;
+      display: block;
+    }
+
+    .visual_title {
+      display: flex;
+      justify-content: center;
+
+      margin-bottom: 20px;
+    }
+
+    .visual_wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 250px 0;
+      width: 100%;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .visual_wrapper > img {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+    }
+    .parallax {
+      z-index: -30;
+    }
+
+    /* 平板 */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .logo img {
+        width: 300px;
+      }
+
+      .visual_wrapper {
+        margin: 180px 0;
+      }
+
+      .visual_title img {
+        width: 220px !important;
+      }
+
+      .back-to-top {
+        width: 50px;
+        right: 30px;
+        bottom: 50px;
+      }
+    }
+    /* 手機  */
+    @media (max-width: 768px) {
+      .logo img {
+        width: 220px;
+      }
+
+      .visual_wrapper {
+        margin: 120px 0 80px;
+        padding: 0 15px;
+      }
+
+      .visual_title img {
+        margin-top: 50px;
+        width: 180px !important;
+      }
+
+      .visual_wrapper > img {
+        max-width: 100%;
+      }
+
+      .back-to-top {
+        width: 45px;
+        right: 20px;
+        bottom: 30px;
+      }
+    }
+  </style>
+  <body>
+    <div class="parallax"></div>
+
+    <section id="visual">
+      <a href="#" class="back-to-top">
+        <img src="./assets/img/Back TOP.png" alt="Back to top" />
+      </a>
+      <div class="logo">
+        <img
+          src="./assets/img/JOHN WEI PORTFOLIO.png"
+          alt="john wei portfolio"
+        />
+      </div>
+
+      <div class="visual_wrapper">
+        <div class="visual_title">
+          <img
+            src="./assets/img/web_visual_design.png"
+            style="width: 250px"
+            alt="網頁視覺"
+          />
+        </div>
+
+        <img src="./assets/img/web_visual.png" alt="網頁視覺圖" />
+      </div>
+    </section>
+
+    <script src="./parallax.js"></script>
+  </body>
+</html>

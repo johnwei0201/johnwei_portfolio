@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Space - Shooting Game</title>
+    <style>
+      @font-face {
+        font-family: "zpix";
+        src: url("./assets/fonts/zpix.ttf") format("truetype");
+      }
+      body {
+        background-color: #1a0033;
+        color: #ffffff;
+        font-family: "zpix", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        background: #000000;
+        border: 2px solid #ffcc00;
+        box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+        max-width: 90vw;
+      }
+      .card {
+        width: 60%;
+        margin-top: 20px;
+        padding: 1.5rem;
+        border: 4px solid #7a3cff;
+        border-radius: 12px;
+        background: rgba(13, 0, 26, 0.8);
+        text-align: center;
+      }
+      h3 {
+        color: #e3db6c;
+        margin-top: 0;
+      }
+      p {
+        margin: 5px 0;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="game" width="600" height="400"></canvas>
+
+    <div class="card">
+      <h3>遊戲規則</h3>
+      <p id="mode-text">模式載入中...</p>
+      <p>1P: [A]、[D] 移動, [空白鍵] 射擊</p>
+      <p id="p2-controls">2P: [←][→] 左右移動, [Enter] 射擊</p>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("game");
+      const ctx = canvas.getContext("2d");
+      // --- 【新增：圖片載入區】 ---
+      // 這兩段要寫在這裡，確保遊戲開始前圖片就準備好
+      const imgP1 = new Image();
+      imgP1.src = "./assets/img/plane_1.png";
+
+      const imgP2 = new Image();
+      imgP2.src = "./assets/img/plane_2.png";
+      // --------------------------
+
+      // 從 URL 取得遊戲模式 (1 or 2 players)
+      const urlParams = new URLSearchParams(window.location.search);
+      const mode = urlParams.get("mode") || "1";
+      document.getElementById("mode-text").innerText = `${mode} PLAYER MODE`;
+
+      // 如果是單人模式，隱藏 P2 的提示並移除 P2 角色
+      if (mode === "1") {
+        document.getElementById("p2-controls").style.display = "none";
+      }
+
+      const players = [
+        {
+          x: canvas.width / 2 - 80,
+          y: canvas.height - 40,
+          width: 40, // 建議改成 40，配合圖片比例
+          height: 30, // 建議改成 30
+          speed: 5,
+          img: imgP1, // 這裡改寫：把原本的 color: "cyan" 刪除，換成 img: imgP1
+          controls: { left: "KeyA", right: "KeyD", shoot: "Space" },
+        },
+      ];
+
+      if (mode === "2") {
+        players.push({
+          x: canvas.width / 2 + 50,
+          y: canvas.height - 40,
+          width: 40,
+          height: 30,
+          speed: 5,
+          img: imgP2, // 這裡改寫：把原本的 color: "lime" 刪除，換成 img: imgP2
+          controls: { left: "ArrowLeft", right: "ArrowRight", shoot: "Enter" },
+        });
+      }
+
+      let score1 = 0;
+      let score2 = 0;
+
+      let bullets = [];
+      let enemies = [];
+      let keys = {};
+
+      window.addEventListener("keydown", (e) => {
+        keys[e.code] = true;
+        players.forEach((p, index) => {
+          if (e.code === p.controls.shoot) shoot(p, index);
+        });
+      });
+
+      window.addEventListener("keyup", (e) => {
+        keys[e.code] = false;
+      });
+
+      function shoot(player, owner) {
+        bullets.push({
+          x: player.x + player.width / 2 - 2,
+          y: player.y,
+          owner,
+        });
+      }
+
+      function spawnEnemy() {
+        enemies.push({ x: Math.random() * (canvas.width - 20), y: 0 });
+      }
+
+      function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        players.forEach((p) => {
+          if (keys[p.controls.left]) p.x -= p.speed;
+          if (keys[p.controls.right]) p.x += p.speed;
+          p.x = Math.max(0, Math.min(canvas.width - p.width, p.x));
+        });
+
+        bullets.forEach((b) => (b.y -= 7));
+        bullets = bullets.filter((b) => b.y > 0);
+        enemies.forEach((e) => (e.y += 2));
+
+        enemies = enemies.filter((e) => {
+          let hitBulletIndex = bullets.findIndex(
+            (b) => b.x > e.x && b.x < e.x + 20 && b.y > e.y && b.y < e.y + 20,
+          );
+
+          if (hitBulletIndex !== -1) {
+            // 取得這顆子彈的主人 (0 代表 1P, 1 代表 2P)
+            const owner = bullets[hitBulletIndex].owner;
+
+            if (owner === 0) {
+              score1 += 100;
+            } else {
+              score2 += 100;
+            }
+
+            // 移除該顆子彈，避免一顆子彈貫穿所有敵人
+            bullets.splice(hitBulletIndex, 1);
+            return false; // 移除敵人
+          }
+          return e.y < canvas.height; // 超過螢幕下方的敵人也移除
+        });
+        // 2. 畫玩家
+        players.forEach((p) => {
+          // 使用 drawImage 畫出飛機 PNG
+          ctx.drawImage(p.img, p.x, p.y, p.width, p.height);
+        });
+        // 3. 畫子彈
+        ctx.fillStyle = "yellow";
+        bullets.forEach((b) => ctx.fillRect(b.x, b.y, 4, 10));
+        // ★【漏掉的地方：在這裡要把敵人畫出來】★
+        ctx.fillStyle = "red"; // 務必指定紅色，否則會變成分數的青色或綠色
+        enemies.forEach((e) => {
+          ctx.fillRect(e.x, e.y, 20, 20);
+        });
+
+        ctx.font = "18px zpix";
+        ctx.fillStyle = "cyan";
+        ctx.fillText(`1P: ${score1}`, 20, 30);
+
+        if (mode === "2") {
+          ctx.fillStyle = "lime";
+          // 讓 2P 分數靠右顯示
+          ctx.fillText(`2P: ${score2}`, canvas.width - 100, 30);
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      setInterval(spawnEnemy, 800);
+      update();
+    </script>
+  </body>
+</html>
