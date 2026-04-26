@@ -297,7 +297,7 @@ h1 {
   transform: translate(-50%);
   width: 20px;
   height: 20px;
-  background-image: url(./assets//img/small\ plane.png);
+  background-image: url("./assets/img/small plane.png");
   background-size: contain;
   background-repeat: no-repeat;
   display: block;
@@ -312,6 +312,7 @@ h1 {
 /*當擁有 active 類別時，強制顯示*/
 .player_item.active::before {
   visibility: visible;
+  opacity: 1;
   animation: arrowBlink 0.5s infinite;
 }
 /* 關於我 區塊*/
@@ -786,6 +787,17 @@ canvas {
     transform: translateY(0px);
   }
 }
+/* 預設：手機隱藏 */
+.mobile-only {
+  display: none;
+}
+
+/* 📱 手機版 */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+}
 
 /*=== RWD===*/
 
@@ -796,11 +808,15 @@ canvas {
     width: 90%;
   }
 }
-/* 手機*/
+/* 手機版只有單人遊戲*/
 @media (max-width: 768px) {
   .content {
     min-height: auto;
     padding: 40px 0;
+  }
+
+  .mobile-only {
+    display: block;
   }
   #hero {
     min-height: auto;

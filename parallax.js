@@ -82,10 +82,9 @@ function hideArrow() {
 
 // 初始化與 Hover 事件監聽
 window.addEventListener("load", () => {
-  const firstItem = document.querySelector(".nav_li");
+  const firstItem = document.querySelector(".nav_li:first-child > a");
   if (firstItem) setArrow(firstItem);
 });
-
 navItems.forEach((item) => {
   item.addEventListener("mouseenter", () => {
     // 桌機版才執行 Hover 箭頭移動
@@ -260,15 +259,24 @@ const playerItems = document.querySelectorAll(".player_item");
 
 playerItems.forEach((item) => {
   item.addEventListener("mouseenter", () => {
-    if (item.classList.contains("active")) return;
+    if (window.innerWidth <= 768) return; // 📱 手機不吃 hover
+
     document
       .querySelectorAll(".player_item")
       .forEach((i) => i.classList.remove("active"));
+
     item.classList.add("active");
   });
 
   item.addEventListener("click", () => {
-    const mode = item.textContent.includes("1") ? "1" : "2";
+    let mode;
+
+    if (item.classList.contains("mobile-only")) {
+      mode = "1"; // 手機一律單人
+    } else {
+      mode = item.textContent.includes("1") ? "1" : "2";
+    }
+
     const w = 700;
     const h = 750;
     const y = window.top.outerHeight / 2 + window.top.screenY - h / 2;
@@ -277,7 +285,17 @@ playerItems.forEach((item) => {
     window.open(
       `game.html?mode=${mode}`,
       "SpaceShooter",
-      `width=${w}, height=${h}, top=${y}, left=${x}, resizable=yes, scrollbars=no, location=no, status=no`,
+      `width=${w}, height=${h}, top=${y}, left=${x}`,
     );
   });
+});
+// ✅ 初始化選中第一個（桌機用）
+window.addEventListener("DOMContentLoaded", () => {
+  const firstPlayer = document.querySelector(
+    ".player_item.desktop-only:first-of-type",
+  );
+
+  if (firstPlayer) {
+    firstPlayer.classList.add("active");
+  }
 });

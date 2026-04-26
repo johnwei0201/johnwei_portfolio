@@ -123,18 +123,17 @@
         },
       ];
 
-      if (mode === "2" && !isMobile) {
+      if (mode === "2") {
         players.push({
           x: canvas.width / 2 + 50,
           y: canvas.height - 40,
           width: 40,
           height: 30,
           speed: 5,
-          img: imgP2, // 這裡改寫：把原本的 color: "lime" 刪除，換成 img: imgP2
+          img: imgP2,
           controls: { left: "ArrowLeft", right: "ArrowRight", shoot: "Enter" },
         });
       }
-
       let score1 = 0;
       let score2 = 0;
 
