@@ -44,11 +44,40 @@
         margin: 5px 0;
         font-size: 14px;
       }
+      /* ✅ 手機控制按鈕 */
+      .mobile-controls {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        display: none; /* 預設隱藏 */
+        justify-content: space-around;
+        z-index: 10;
+      }
+
+      .mobile-controls button {
+        font-size: 24px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      /* 📱 手機才顯示 */
+      @media (max-width: 768px) {
+        .mobile-controls {
+          display: flex;
+        }
+      }
     </style>
   </head>
   <body>
     <canvas id="game" width="600" height="400"></canvas>
-
+    <div class="mobile-controls">
+      <button class="btn-left">◀</button>
+      <button class="btn-shoot">●</button>
+      <button class="btn-right">▶</button>
+    </div>
     <div class="card">
       <h3>遊戲規則</h3>
       <p id="mode-text">模式載入中...</p>
@@ -59,6 +88,10 @@
     <script>
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
+
+      // ✅ 放這裡（很重要）
+      let touchX = null;
+      let isMobile = window.innerWidth <= 768;
       // --- 【新增：圖片載入區】 ---
       // 這兩段要寫在這裡，確保遊戲開始前圖片就準備好
       const imgP1 = new Image();
@@ -74,7 +107,7 @@
       document.getElementById("mode-text").innerText = `${mode} PLAYER MODE`;
 
       // 如果是單人模式，隱藏 P2 的提示並移除 P2 角色
-      if (mode === "1") {
+      if (mode === "1" || isMobile) {
         document.getElementById("p2-controls").style.display = "none";
       }
 
@@ -90,7 +123,7 @@
         },
       ];
 
-      if (mode === "2") {
+      if (mode === "2" && !isMobile) {
         players.push({
           x: canvas.width / 2 + 50,
           y: canvas.height - 40,
@@ -108,6 +141,13 @@
       let bullets = [];
       let enemies = [];
       let keys = {};
+      // 手機版遊戲按鈕控制
+      const btnLeft = document.querySelector(".btn-left");
+      const btnRight = document.querySelector(".btn-right");
+      const btnShoot = document.querySelector(".btn-shoot");
+
+      let moveLeft = false;
+      let moveRight = false;
 
       window.addEventListener("keydown", (e) => {
         keys[e.code] = true;
@@ -135,9 +175,15 @@
       function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        players.forEach((p) => {
+        players.forEach((p, index) => {
+          // 電腦控制
           if (keys[p.controls.left]) p.x -= p.speed;
           if (keys[p.controls.right]) p.x += p.speed;
+
+          if (isMobile && index === 0) {
+            if (moveLeft) p.x -= p.speed;
+            if (moveRight) p.x += p.speed;
+          }
           p.x = Math.max(0, Math.min(canvas.width - p.width, p.x));
         });
 
@@ -195,6 +241,36 @@
 
       setInterval(spawnEnemy, 800);
       update();
+
+      //  手機點擊 = 射擊
+      shoot(players[0], 0);
+
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        touchX = e.touches[0].clientX;
+      });
+
+      canvas.addEventListener("touchend", () => {
+        touchX = null;
+      });
+
+      //  防止畫面滑動
+      document.body.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.target === canvas) e.preventDefault();
+        },
+        { passive: false },
+      );
+
+      // 📱 手機按鈕控制
+      btnLeft?.addEventListener("touchstart", () => (moveLeft = true));
+      btnLeft?.addEventListener("touchend", () => (moveLeft = false));
+
+      btnRight?.addEventListener("touchstart", () => (moveRight = true));
+      btnRight?.addEventListener("touchend", () => (moveRight = false));
+
+      btnShoot?.addEventListener("touchstart", () => shoot(players[0], 0));
     </script>
   </body>
 </html>
