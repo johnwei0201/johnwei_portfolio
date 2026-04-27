@@ -47,16 +47,21 @@
         margin: 5px 0;
         font-size: 14px;
       }
-      /* ✅ 手機控制按鈕 */
+      /* 手機控制按鈕 */
       .mobile-controls {
         position: fixed;
         bottom: 20px;
         width: 100%;
-        display: none; /* 預設隱藏 */
-        justify-content: space-around;
+        display: flex;
+        justify-content: space-between; /* 左右分開 */
+        align-items: center;
+        padding: 0 20px; /* 左右留點空間 */
         z-index: 10;
       }
-
+      .left-controls {
+        display: flex;
+        gap: 10px;
+      }
       .mobile-controls button {
         font-size: 24px;
         padding: 15px 20px;
@@ -77,8 +82,11 @@
   <body>
     <canvas id="game" width="600" height="400"></canvas>
     <div class="mobile-controls">
-      <button class="btn-left">◀</button>
-      <button class="btn-right">▶</button>
+      <div class="left-controls">
+        <button class="btn-left">◀</button>
+        <button class="btn-right">▶</button>
+      </div>
+
       <button class="btn-shoot">●</button>
     </div>
     <div class="card">
@@ -95,8 +103,8 @@
       //
       let touchX = null;
       let isMobile = window.innerWidth <= 768;
-      // --- 【新增：圖片載入區】 ---
-      // 這兩段要寫在這裡，確保遊戲開始前圖片就準備好
+      // --- 圖片載入區---
+      //
       const imgP1 = new Image();
       imgP1.src = "./assets/img/plane_1.png";
 
@@ -118,10 +126,10 @@
         {
           x: canvas.width / 2 - 80,
           y: canvas.height - 40,
-          width: 40, // 建議改成 40，配合圖片比例
-          height: 30, // 建議改成 30
+          width: 40,
+          height: 30,
           speed: 5,
-          img: imgP1, // 這裡改寫：把原本的 color: "cyan" 刪除，換成 img: imgP1
+          img: imgP1,
           controls: { left: "KeyA", right: "KeyD", shoot: "Space" },
         },
       ];
@@ -222,8 +230,8 @@
         // 3. 畫子彈
         ctx.fillStyle = "yellow";
         bullets.forEach((b) => ctx.fillRect(b.x, b.y, 4, 10));
-        // ★【漏掉的地方：在這裡要把敵人畫出來】★
-        ctx.fillStyle = "red"; // 務必指定紅色，否則會變成分數的青色或綠色
+        // 敵機
+        ctx.fillStyle = "red";
         enemies.forEach((e) => {
           ctx.fillRect(e.x, e.y, 20, 20);
         });
