@@ -971,7 +971,10 @@ canvas {
       text-align: left;
       line-height: 45px;
     }
-
+    /*字不換行*/
+    .photo_info > p {
+      white-space: nowrap;
+    }
     /* 技能區 */
     .about_skills {
       width: 100%;
