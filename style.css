@@ -304,6 +304,7 @@ h1 {
   opacity: 0;
   visibility: hidden;
   animation: arrowBlink 0.5s infinite;
+  z-index: 10;
 }
 /* 被選中 → 顯示顏色 */
 .player_item.active {
@@ -312,8 +313,8 @@ h1 {
 /*當擁有 active 類別時，強制顯示*/
 .player_item.active::before {
   visibility: visible;
-  opacity: 1;
   animation: arrowBlink 0.5s infinite;
+  opacity: 1;
 }
 /* 關於我 區塊*/
 .about_wrapper {
