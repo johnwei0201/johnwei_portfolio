@@ -289,11 +289,17 @@ playerItems.forEach((item) => {
     );
   });
 });
-// ✅ 初始化選中第一個（桌機用）
+// 初始化選中第一個（支援手機＋桌機）
 window.addEventListener("DOMContentLoaded", () => {
-  const firstPlayer = document.querySelector(
-    ".player_item.desktop-only:first-of-type",
-  );
+  let firstPlayer;
+
+  if (window.innerWidth <= 768) {
+    // 📱 手機 → 抓 mobile-only
+    firstPlayer = document.querySelector(".player_item.mobile-only");
+  } else {
+    // 🖥️ 桌機 → 抓 desktop-only
+    firstPlayer = document.querySelector(".player_item.desktop-only");
+  }
 
   if (firstPlayer) {
     firstPlayer.classList.add("active");

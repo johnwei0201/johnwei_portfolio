@@ -788,15 +788,15 @@ canvas {
     transform: translateY(0px);
   }
 }
-/* 預設：手機隱藏 */
-.mobile-only {
-  display: none;
-}
 
 /* 📱 手機版 */
 @media (max-width: 768px) {
   .desktop-only {
     display: none;
+  }
+
+  .mobile-only {
+    display: block;
   }
 }
 
