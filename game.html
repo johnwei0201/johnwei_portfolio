@@ -75,8 +75,8 @@
     <canvas id="game" width="600" height="400"></canvas>
     <div class="mobile-controls">
       <button class="btn-left">◀</button>
-      <button class="btn-shoot">●</button>
-      <button class="btn-right">▶</button>
+      <button class="btn-shoot">▶</button>
+      <button class="btn-right">●</button>
     </div>
     <div class="card">
       <h3>遊戲規則</h3>
@@ -89,7 +89,7 @@
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
 
-      // ✅ 放這裡（很重要）
+      //
       let touchX = null;
       let isMobile = window.innerWidth <= 768;
       // --- 【新增：圖片載入區】 ---
@@ -263,13 +263,16 @@
       );
 
       // 📱 手機按鈕控制
+      // 左移
       btnLeft?.addEventListener("touchstart", () => (moveLeft = true));
       btnLeft?.addEventListener("touchend", () => (moveLeft = false));
 
-      btnRight?.addEventListener("touchstart", () => (moveRight = true));
-      btnRight?.addEventListener("touchend", () => (moveRight = false));
+      // 右移
+      btnShoot?.addEventListener("touchstart", () => (moveRight = true));
+      btnShoot?.addEventListener("touchend", () => (moveRight = false));
 
-      btnShoot?.addEventListener("touchstart", () => shoot(players[0], 0));
+      // 射擊
+      btnRight?.addEventListener("touchstart", () => shoot(players[0], 0));
     </script>
   </body>
 </html>
