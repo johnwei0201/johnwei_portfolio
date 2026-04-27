@@ -27,6 +27,9 @@
         box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
         max-width: 90vw;
       }
+      button {
+        touch-action: manipulation;
+      }
       .card {
         width: 60%;
         margin-top: 20px;
@@ -75,8 +78,8 @@
     <canvas id="game" width="600" height="400"></canvas>
     <div class="mobile-controls">
       <button class="btn-left">◀</button>
-      <button class="btn-shoot">▶</button>
-      <button class="btn-right">●</button>
+      <button class="btn-right">▶</button>
+      <button class="btn-shoot">●</button>
     </div>
     <div class="card">
       <h3>遊戲規則</h3>
@@ -268,11 +271,26 @@
       btnLeft?.addEventListener("touchend", () => (moveLeft = false));
 
       // 右移
-      btnShoot?.addEventListener("touchstart", () => (moveRight = true));
-      btnShoot?.addEventListener("touchend", () => (moveRight = false));
+      btnRight?.addEventListener("touchstart", () => (moveRight = true));
+      btnRight?.addEventListener("touchend", () => (moveRight = false));
 
       // 射擊
-      btnRight?.addEventListener("touchstart", () => shoot(players[0], 0));
+      btnShoot?.addEventListener("touchstart", () => shoot(players[0], 0));
+
+      btnLeft?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveLeft = true;
+      });
+
+      btnRight?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveRight = true;
+      });
+
+      btnShoot?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        shoot(players[0], 0);
+      });
     </script>
   </body>
 </html>
