@@ -69,12 +69,15 @@
         margin-right: 50px;
       }
       .mobile-controls button {
-        font-size: 24px;
-        padding: 15px 20px;
+        font-size: 28px;
+        padding: 28px 25px;
         border-radius: 10px;
         border: none;
         background: rgba(255, 255, 255, 0.2);
         color: white;
+        /* 防止長按選取文字 */
+        -webkit-user-select: none;
+        user-select: none;
       }
       .mobile-controls {
         bottom: 50px;
