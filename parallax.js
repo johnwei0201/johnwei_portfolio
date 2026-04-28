@@ -291,11 +291,17 @@ playerItems.forEach((item) => {
 });
 // ✅ 初始化選中第一個（桌機用）
 window.addEventListener("DOMContentLoaded", () => {
+  // 桌機
   const firstPlayer = document.querySelector(
     ".player_item.desktop-only:first-of-type",
   );
-
   if (firstPlayer) {
     firstPlayer.classList.add("active");
+  }
+
+  // 手機
+  const mobilePlayer = document.querySelector(".mobile-only");
+  if (mobilePlayer) {
+    mobilePlayer.classList.add("active");
   }
 });
