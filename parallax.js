@@ -277,7 +277,7 @@ playerItems.forEach((item) => {
       mode = item.textContent.includes("1") ? "1" : "2";
     }
 
-    const w = 700;
+    const w = 800;
     const h = 750;
     const y = window.top.outerHeight / 2 + window.top.screenY - h / 2;
     const x = window.top.outerWidth / 2 + window.top.screenX - w / 2;
