@@ -16,9 +16,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         height: 100vh;
-        margin: 0;
+        padding-top: 40px;
         overflow: hidden;
       }
       canvas {
@@ -26,6 +26,9 @@
         border: 2px solid #ffcc00;
         box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
         max-width: 90vw;
+      }
+      button {
+        touch-action: manipulation;
       }
       .card {
         width: 60%;
@@ -44,11 +47,63 @@
         margin: 5px 0;
         font-size: 14px;
       }
+      /* 手機控制按鈕 */
+      .mobile-controls {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between; /* 左右分開 */
+        align-items: center;
+        padding: 0 20px; /* 左右留點空間 */
+        z-index: 10;
+      }
+      .left-controls {
+        margin-left: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-shoot {
+        margin-right: 20px;
+      }
+      .mobile-controls button {
+        font-size: 28px;
+        padding: 28px 25px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        /* 防止長按選取文字 */
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      .mobile-controls {
+        bottom: 50px;
+      }
+
+      /* 📱 手機才顯示 */
+      @media (max-width: 768px) {
+        .mobile-controls {
+          display: flex;
+          bottom: 220px;
+        }
+        .card {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
     <canvas id="game" width="600" height="400"></canvas>
+    <div class="mobile-controls">
+      <div class="left-controls">
+        <button class="btn-left">◀</button>
+        <button class="btn-right">▶</button>
+      </div>
 
+      <button class="btn-shoot">●</button>
+    </div>
     <div class="card">
       <h3>遊戲規則</h3>
       <p id="mode-text">模式載入中...</p>
@@ -59,8 +114,12 @@
     <script>
       const canvas = document.getElementById("game");
       const ctx = canvas.getContext("2d");
-      // --- 【新增：圖片載入區】 ---
-      // 這兩段要寫在這裡，確保遊戲開始前圖片就準備好
+
+      //
+      let touchX = null;
+      let isMobile = window.innerWidth <= 768;
+      // --- 圖片載入區---
+      //
       const imgP1 = new Image();
       imgP1.src = "./assets/img/plane_1.png";
 
@@ -74,7 +133,7 @@
       document.getElementById("mode-text").innerText = `${mode} PLAYER MODE`;
 
       // 如果是單人模式，隱藏 P2 的提示並移除 P2 角色
-      if (mode === "1") {
+      if (mode === "1" || isMobile) {
         document.getElementById("p2-controls").style.display = "none";
       }
 
@@ -82,10 +141,10 @@
         {
           x: canvas.width / 2 - 80,
           y: canvas.height - 40,
-          width: 40, // 建議改成 40，配合圖片比例
-          height: 30, // 建議改成 30
+          width: 40,
+          height: 30,
           speed: 5,
-          img: imgP1, // 這裡改寫：把原本的 color: "cyan" 刪除，換成 img: imgP1
+          img: imgP1,
           controls: { left: "KeyA", right: "KeyD", shoot: "Space" },
         },
       ];
@@ -97,17 +156,23 @@
           width: 40,
           height: 30,
           speed: 5,
-          img: imgP2, // 這裡改寫：把原本的 color: "lime" 刪除，換成 img: imgP2
+          img: imgP2,
           controls: { left: "ArrowLeft", right: "ArrowRight", shoot: "Enter" },
         });
       }
-
       let score1 = 0;
       let score2 = 0;
 
       let bullets = [];
       let enemies = [];
       let keys = {};
+      // 手機版遊戲按鈕控制
+      const btnLeft = document.querySelector(".btn-left");
+      const btnRight = document.querySelector(".btn-right");
+      const btnShoot = document.querySelector(".btn-shoot");
+
+      let moveLeft = false;
+      let moveRight = false;
 
       window.addEventListener("keydown", (e) => {
         keys[e.code] = true;
@@ -135,9 +200,15 @@
       function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        players.forEach((p) => {
+        players.forEach((p, index) => {
+          // 電腦控制
           if (keys[p.controls.left]) p.x -= p.speed;
           if (keys[p.controls.right]) p.x += p.speed;
+
+          if (isMobile && index === 0) {
+            if (moveLeft) p.x -= p.speed;
+            if (moveRight) p.x += p.speed;
+          }
           p.x = Math.max(0, Math.min(canvas.width - p.width, p.x));
         });
 
@@ -174,8 +245,8 @@
         // 3. 畫子彈
         ctx.fillStyle = "yellow";
         bullets.forEach((b) => ctx.fillRect(b.x, b.y, 4, 10));
-        // ★【漏掉的地方：在這裡要把敵人畫出來】★
-        ctx.fillStyle = "red"; // 務必指定紅色，否則會變成分數的青色或綠色
+        // 敵機
+        ctx.fillStyle = "red";
         enemies.forEach((e) => {
           ctx.fillRect(e.x, e.y, 20, 20);
         });
@@ -195,6 +266,54 @@
 
       setInterval(spawnEnemy, 800);
       update();
+
+      //  手機點擊 = 射擊
+      shoot(players[0], 0);
+
+      canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        touchX = e.touches[0].clientX;
+      });
+
+      canvas.addEventListener("touchend", () => {
+        touchX = null;
+      });
+
+      //  防止畫面滑動
+      document.body.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.target === canvas) e.preventDefault();
+        },
+        { passive: false },
+      );
+
+      // 📱 手機按鈕控制
+      // 左移
+      btnLeft?.addEventListener("touchstart", () => (moveLeft = true));
+      btnLeft?.addEventListener("touchend", () => (moveLeft = false));
+
+      // 右移
+      btnRight?.addEventListener("touchstart", () => (moveRight = true));
+      btnRight?.addEventListener("touchend", () => (moveRight = false));
+
+      // 射擊
+      btnShoot?.addEventListener("touchstart", () => shoot(players[0], 0));
+
+      btnLeft?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveLeft = true;
+      });
+
+      btnRight?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveRight = true;
+      });
+
+      btnShoot?.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        shoot(players[0], 0);
+      });
     </script>
   </body>
 </html>

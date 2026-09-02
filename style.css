@@ -126,6 +126,62 @@ body {
   z-index: -1;
   pointer-events: none;
 } */
+
+/* ===== 文字可讀性遮罩 =====
+   星空背景的亮點會吃掉文字，所以在「文字量大的區塊」墊一層暗底。
+   hero 與作品輪播不套用，維持背景原本的亮度。
+   想調整濃淡改下面三個變數即可。 */
+:root {
+  --scrim-alpha: 0.55; /* 遮罩濃度：0 = 全透明，1 = 全黑 */
+  --scrim-fade-x: 12%; /* 左右淡出寬度 */
+  --scrim-fade-y: 90px; /* 上下淡出高度，避免區塊之間出現橫向接縫 */
+}
+
+#about::before,
+#contact::before,
+#footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  /* 左右淡出，中央柱狀壓暗 */
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, var(--scrim-alpha)) var(--scrim-fade-x),
+    rgba(0, 0, 0, var(--scrim-alpha)) calc(100% - var(--scrim-fade-x)),
+    rgba(0, 0, 0, 0) 100%
+  );
+
+  /* 上下淡出，讓相鄰區塊自然銜接 */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--scrim-fade-y),
+    #000 calc(100% - var(--scrim-fade-y)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--scrim-fade-y),
+    #000 calc(100% - var(--scrim-fade-y)),
+    transparent 100%
+  );
+}
+
+/* 直接浮在星空上的文字再加一層黑色光暈，
+   專門處理「亮點剛好落在字的後面」的狀況，不會遮到背景。 */
+.photo_info,
+.skill_item span,
+.contact_item,
+.footer_text {
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 0 14px rgba(0, 0, 0, 0.75);
+}
 #portfolio {
   scroll-margin-top: -200px;
 }
@@ -297,7 +353,7 @@ h1 {
   transform: translate(-50%);
   width: 20px;
   height: 20px;
-  background-image: url(./assets//img/small\ plane.png);
+  background-image: url("./assets/img/small plane.png");
   background-size: contain;
   background-repeat: no-repeat;
   display: block;
@@ -312,6 +368,7 @@ h1 {
 /*當擁有 active 類別時，強制顯示*/
 .player_item.active::before {
   visibility: visible;
+  opacity: 1;
   animation: arrowBlink 0.5s infinite;
 }
 /* 關於我 區塊*/
@@ -355,7 +412,7 @@ h1 {
 .photo_info {
   font-size: 25px;
   margin-top: 5px;
-  line-height: 1.3;
+  line-height: 1.6;
 }
 .skill_item {
   display: flex;
@@ -786,6 +843,17 @@ canvas {
     transform: translateY(0px);
   }
 }
+/* 預設：手機隱藏 */
+.mobile-only {
+  display: none;
+}
+
+/* 📱 手機版 */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+}
 
 /*=== RWD===*/
 
@@ -796,11 +864,15 @@ canvas {
     width: 90%;
   }
 }
-/* 手機*/
+/* 手機版只有單人遊戲*/
 @media (max-width: 768px) {
   .content {
     min-height: auto;
     padding: 40px 0;
+  }
+
+  .mobile-only {
+    display: block;
   }
   #hero {
     min-height: auto;
@@ -873,6 +945,19 @@ canvas {
   .nav_li.active .dropdown {
     display: block;
   }
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .controls button {
+    font-size: 24px;
+    padding: 15px;
+  }
 
   /*RWD：技能條排版 */
   .skill_item {
@@ -940,9 +1025,12 @@ canvas {
 
     .photo_info {
       text-align: left;
-      line-height: 45px;
+      line-height: 52px;
     }
-
+    /*字不換行*/
+    .photo_info > p {
+      white-space: nowrap;
+    }
     /* 技能區 */
     .about_skills {
       width: 100%;
@@ -977,5 +1065,14 @@ canvas {
     width: 55%;
     transform: rotate(20deg);
     transform: rotate(3deg);
+  }
+}
+
+/* 手機版：畫面窄，遮罩淡出範圍縮小、濃度略提高 */
+@media (max-width: 768px) {
+  :root {
+    --scrim-alpha: 0.62;
+    --scrim-fade-x: 4%;
+    --scrim-fade-y: 50px;
   }
 }
