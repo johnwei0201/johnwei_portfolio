@@ -12,31 +12,25 @@ let moveSlide; // 輪播圖移動函式 (供外部呼叫)
  * 2. 星空背景 - 滾動視差區 (Parallax Effect)
  * =====================================================================
  */
-
 // 各星層原始長寬比（高 ÷ 寬），用來推算渲染高度
 const LAYER_RATIO = {
+  first: 5712 / 1033, // bg_First_layer.png
   second: 5857 / 1052, // bg_Second_layerr.png
   third: 5580 / 974, // bg_Third_layer.png
   deep: 6841 / 1920, // background.png（密集星海）
 };
-// 三張星空圖的星點都集中在左右兩緣、中間刻意留白（實測留白分別為
-// bg_First 60%、bg_Second 40%、bg_Third 20%），本來就是為了讓內容
-// 擺中間、星星落在兩側。因此側條寬度要對齊內容區兩旁的留白寬度，
-// 並貼齊畫面邊緣，整張圖的兩道星帶才會落在看得見的位置。
-const SIDE_MIN = 240; // 側條最小寬度，太窄像素點會糊掉
-const SIDE_MAX = 460; // 側條最大寬度，太寬圖會變高、同畫面星點變少
+
+// 各層寬度（佔視窗寬度 %）
+const LAYER_WIDTH = { first: 80, second: 50, third: 70, deep: 100 };
 
 // 期望速率。實際速率會再受圖高限制，見 measureParallax()
-const LAYER_RATE = { second: 0.15, third: 0.08, deep: 0.7 };
-
-const SIDE_BREAKPOINT = 1024; // 超過才啟用左右並排
-const OFFSCREEN = "left -400% top"; // 窄螢幕時把多餘的那份移出畫面，不繪製
+const LAYER_RATE = { first: 0.3, second: 0.05, third: 0.02, deep: 0.7 };
 
 const parallaxEl = document.querySelector(".parallax");
 let parallaxLayout = null;
 
 /**
- * 量測視窗尺寸，決定各層寬度與「安全速率」。
+ * 量測視窗尺寸，算出各層的「安全速率」。
  * 速率上限 = (圖的渲染高度 - 視窗高) ÷ 總捲動距離，
  * 超過這個值，捲到底時圖就會見底露出空白。
  */
@@ -45,40 +39,16 @@ function measureParallax() {
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const wide = vw > SIDE_BREAKPOINT;
   const maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
-
-  // 量實際內容寬度，推算兩側留白；量不到時退回保守值
-  const contentEl = document.querySelector(".about_wrapper");
-  const contentW = contentEl ? contentEl.offsetWidth : Math.min(960, vw);
-  const margin = Math.max(0, (vw - contentW) / 2);
-  const sideW = Math.min(SIDE_MAX, Math.max(SIDE_MIN, margin));
-
-  // 桌機用貼邊側條，平板以下沒有側邊空間，回到原本的置中大圖
-  const px = {
-    second: wide ? sideW : vw * 0.5,
-    third: wide ? sideW : vw * 0.7,
-    deep: vw,
-  };
 
   const rate = {};
   Object.keys(LAYER_RATIO).forEach((key) => {
-    const spare = px[key] * LAYER_RATIO[key] - vh;
+    const renderedH = vw * (LAYER_WIDTH[key] / 100) * LAYER_RATIO[key];
+    const spare = renderedH - vh;
     rate[key] = spare <= 0 ? 0 : Math.min(LAYER_RATE[key], spare / maxScroll);
   });
 
-  parallaxLayout = { wide, rate, sideW: Math.round(sideW), margin: Math.round(margin) };
-
-  parallaxEl.style.backgroundSize = [
-    "5% auto",
-    "3% auto",
-    `${Math.round(px.second)}px auto`,
-    `${Math.round(px.second)}px auto`,
-    `${Math.round(px.third)}px auto`,
-    `${Math.round(px.third)}px auto`,
-    "80% auto",
-    "100% auto",
-  ].join(", ");
+  parallaxLayout = { rate };
 }
 
 function updateParallax() {
@@ -87,43 +57,26 @@ function updateParallax() {
 
   const scrolled = window.scrollY;
   const vh = window.innerHeight;
-  const { wide, rate } = parallaxLayout;
+  const { rate } = parallaxLayout;
 
   // 飛船 1：從 100vh 開始移動
   const ship1Pos = vh - scrolled * 0.5;
   // 飛船 2：從 120vh 開始移動
   const ship2Pos = vh * 1.2 - scrolled * 0.4 + 300;
-  // 星層 1 (背景圖)：起始點設為 vh，確保從第二頁開始出現
-  const layer1Pos = vh - scrolled * 0.3;
-
-  const secondPos = 0 - scrolled * rate.second;
-  const thirdPos = 0 - scrolled * rate.third;
-  const deepPos = 0 - scrolled * rate.deep;
-
-  // 桌機：兩份拷貝貼齊左右邊緣，讓圖上兩道星帶都落在留白處
-  // 平板以下：左份回到置中，右份移出畫面
-  const secondL = wide ? `left 0px top ${secondPos}px` : `center ${secondPos}px`;
-  const secondR = wide
-    ? `right 0px top ${secondPos}px`
-    : `${OFFSCREEN} ${secondPos}px`;
-  const thirdL = wide ? `left 0px top ${thirdPos}px` : `center ${thirdPos}px`;
-  const thirdR = wide
-    ? `right 0px top ${thirdPos}px`
-    : `${OFFSCREEN} ${thirdPos}px`;
+  // 星層 1：起始點設為 vh，確保從第二頁開始出現
+  const layer1Pos = vh - scrolled * rate.first;
 
   parallaxEl.style.backgroundPosition = [
     `left 8% top ${ship1Pos}px`,
     `right 8% top ${ship2Pos}px`,
-    secondL,
-    secondR,
-    thirdL,
-    thirdR,
     `center ${layer1Pos}px`,
-    `center ${deepPos}px`,
+    `center ${0 - scrolled * rate.second}px`,
+    `center ${0 - scrolled * rate.third}px`,
+    `center ${0 - scrolled * rate.deep}px`,
   ].join(", ");
 }
 
-// 捲動事件用 rAF 節流，避免每個事件都重繪 8 個圖層
+// 捲動事件用 rAF 節流，避免每個事件都重繪整組圖層
 let parallaxTicking = false;
 function onParallaxScroll() {
   if (parallaxTicking) return;

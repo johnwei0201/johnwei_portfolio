@@ -24,10 +24,9 @@ body {
 }
 
 /* 星際背景
-   圖層順序由上到下；bg_Second / bg_Third 各放兩份，
-   桌機時分列內容區左右兩側的空白處，讓移動在作品遮擋下仍然看得見。
-   background-size 與 background-position 由 parallax.js 統一設定，
-   下面的 size 只是 JS 執行前的預設值，避免閃爍。 */
+   圖層順序由上到下。最底層的 background.png（密集星海）原本掛在
+   html/body 上且 background-attachment: fixed 完全不動，現已移進來
+   交由 parallax.js 驅動。各層的 position 由 JS 設定。 */
 .parallax {
   width: 100%;
   height: 100%;
@@ -38,30 +37,24 @@ body {
   background-image:
     url(./assets/img/spaceship_1.png),
     url(./assets/img/spaceship_2.png),
-    url(./assets/img/bg_Second_layerr.png),
-    url(./assets/img/bg_Second_layerr.png),
-    url(./assets/img/bg_Third_layer.png),
-    url(./assets/img/bg_Third_layer.png),
     url(./assets/img/bg_First_layer.png),
+    url(./assets/img/bg_Second_layerr.png),
+    url(./assets/img/bg_Third_layer.png),
     url(./assets/img/background.png);
   background-repeat: no-repeat;
   background-size:
     5% auto,
     3% auto,
-    28% auto,
-    28% auto,
-    32% auto,
-    32% auto,
     80% auto,
+    50% auto,
+    70% auto,
     100% auto;
   background-position:
     left 8% top 100vh,
     right 8% top 120vh,
-    left 2% top 0px,
-    right 2% top 0px,
-    left 6% top 0px,
-    right 6% top 0px,
     center 100vh,
+    center 0px,
+    center 0px,
     center 0px;
   background-attachment: local;
 }
