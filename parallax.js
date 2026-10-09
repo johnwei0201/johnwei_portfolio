@@ -12,9 +12,72 @@ let moveSlide; // 輪播圖移動函式 (供外部呼叫)
  * 2. 星空背景 - 滾動視差區 (Parallax Effect)
  * =====================================================================
  */
+
+// 各星層原始長寬比（高 ÷ 寬），用來推算渲染高度
+const LAYER_RATIO = {
+  second: 5857 / 1052, // bg_Second_layerr.png
+  third: 5580 / 974, // bg_Third_layer.png
+  deep: 6841 / 1920, // background.png（密集星海）
+};
+
+// 星層寬度（佔視窗寬度 %）。桌機用窄側條讓星點落在內容區兩側，
+// 平板以下沒有側邊空間，回到置中大圖。需與 style.css 的 .parallax 對應。
+const LAYER_WIDTH = {
+  wide: { second: 28, third: 32, deep: 100 },
+  narrow: { second: 50, third: 70, deep: 100 },
+};
+
+// 期望速率。實際速率會再受圖高限制，見 measureParallax()
+const LAYER_RATE = { second: 0.15, third: 0.08, deep: 0.7 };
+
+const SIDE_BREAKPOINT = 1024; // 超過才啟用左右並排
+const OFFSCREEN = "left -400% top"; // 窄螢幕時把多餘的那份移出畫面，不繪製
+
+const parallaxEl = document.querySelector(".parallax");
+let parallaxLayout = null;
+
+/**
+ * 量測視窗尺寸，決定各層寬度與「安全速率」。
+ * 速率上限 = (圖的渲染高度 - 視窗高) ÷ 總捲動距離，
+ * 超過這個值，捲到底時圖就會見底露出空白。
+ */
+function measureParallax() {
+  if (!parallaxEl) return;
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const wide = vw > SIDE_BREAKPOINT;
+  const width = wide ? LAYER_WIDTH.wide : LAYER_WIDTH.narrow;
+  const maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+
+  const rate = {};
+  Object.keys(LAYER_RATIO).forEach((key) => {
+    const renderedH = vw * (width[key] / 100) * LAYER_RATIO[key];
+    const spare = renderedH - vh;
+    rate[key] = spare <= 0 ? 0 : Math.min(LAYER_RATE[key], spare / maxScroll);
+  });
+
+  parallaxLayout = { wide, rate };
+
+  parallaxEl.style.backgroundSize = [
+    "5% auto",
+    "3% auto",
+    `${width.second}% auto`,
+    `${width.second}% auto`,
+    `${width.third}% auto`,
+    `${width.third}% auto`,
+    "80% auto",
+    `${width.deep}% auto`,
+  ].join(", ");
+}
+
 function updateParallax() {
+  if (!parallaxEl) return;
+  if (!parallaxLayout) measureParallax();
+
   const scrolled = window.scrollY;
   const vh = window.innerHeight;
+  const { wide, rate } = parallaxLayout;
 
   // 飛船 1：從 100vh 開始移動
   const ship1Pos = vh - scrolled * 0.5;
@@ -23,21 +86,59 @@ function updateParallax() {
   // 星層 1 (背景圖)：起始點設為 vh，確保從第二頁開始出現
   const layer1Pos = vh - scrolled * 0.3;
 
-  const container = document.querySelector(".parallax");
-  if (container) {
-    container.style.backgroundPosition = `
-      left 8% top ${ship1Pos}px,
-      right 8% top ${ship2Pos}px,
-      center ${layer1Pos}px,
-      center ${0 - scrolled * 0.05}px,
-      center ${0 - scrolled * 0.02}px
-    `;
-  }
+  const secondPos = 0 - scrolled * rate.second;
+  const thirdPos = 0 - scrolled * rate.third;
+  const deepPos = 0 - scrolled * rate.deep;
+
+  // 桌機：兩份拷貝分列左右，彼此錯開一點讓速差更容易辨識
+  // 平板以下：左份回到置中，右份移出畫面
+  const secondL = wide ? `left 2% top ${secondPos}px` : `center ${secondPos}px`;
+  const secondR = wide
+    ? `right 2% top ${secondPos}px`
+    : `${OFFSCREEN} ${secondPos}px`;
+  const thirdL = wide ? `left 6% top ${thirdPos}px` : `center ${thirdPos}px`;
+  const thirdR = wide
+    ? `right 6% top ${thirdPos}px`
+    : `${OFFSCREEN} ${thirdPos}px`;
+
+  parallaxEl.style.backgroundPosition = [
+    `left 8% top ${ship1Pos}px`,
+    `right 8% top ${ship2Pos}px`,
+    secondL,
+    secondR,
+    thirdL,
+    thirdR,
+    `center ${layer1Pos}px`,
+    `center ${deepPos}px`,
+  ].join(", ");
+}
+
+// 捲動事件用 rAF 節流，避免每個事件都重繪 8 個圖層
+let parallaxTicking = false;
+function onParallaxScroll() {
+  if (parallaxTicking) return;
+  parallaxTicking = true;
+  requestAnimationFrame(() => {
+    updateParallax();
+    parallaxTicking = false;
+  });
 }
 
 // 監聽捲動與載入
-window.addEventListener("scroll", updateParallax);
-window.addEventListener("DOMContentLoaded", updateParallax);
+window.addEventListener("scroll", onParallaxScroll, { passive: true });
+window.addEventListener("resize", () => {
+  measureParallax();
+  updateParallax();
+});
+window.addEventListener("DOMContentLoaded", () => {
+  measureParallax();
+  updateParallax();
+});
+// 圖片載入後頁面總高度才確定，重新量一次速率
+window.addEventListener("load", () => {
+  measureParallax();
+  updateParallax();
+});
 
 /**
  * =====================================================================
