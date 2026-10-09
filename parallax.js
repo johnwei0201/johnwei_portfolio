@@ -29,8 +29,8 @@ function updateParallax() {
       left 8% top ${ship1Pos}px,
       right 8% top ${ship2Pos}px,
       center ${layer1Pos}px,
-      center ${0 - scrolled * 0.05}px,
-      center ${0 - scrolled * 0.02}px
+      center ${0 - scrolled * 0.15}px,
+      center ${0 - scrolled * 0.08}px
     `;
   }
 }
