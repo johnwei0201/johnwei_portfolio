@@ -19,13 +19,12 @@ const LAYER_RATIO = {
   third: 5580 / 974, // bg_Third_layer.png
   deep: 6841 / 1920, // background.png（密集星海）
 };
-
-// 星層寬度（佔視窗寬度 %）。桌機用窄側條讓星點落在內容區兩側，
-// 平板以下沒有側邊空間，回到置中大圖。需與 style.css 的 .parallax 對應。
-const LAYER_WIDTH = {
-  wide: { second: 28, third: 32, deep: 100 },
-  narrow: { second: 50, third: 70, deep: 100 },
-};
+// 三張星空圖的星點都集中在左右兩緣、中間刻意留白（實測留白分別為
+// bg_First 60%、bg_Second 40%、bg_Third 20%），本來就是為了讓內容
+// 擺中間、星星落在兩側。因此側條寬度要對齊內容區兩旁的留白寬度，
+// 並貼齊畫面邊緣，整張圖的兩道星帶才會落在看得見的位置。
+const SIDE_MIN = 240; // 側條最小寬度，太窄像素點會糊掉
+const SIDE_MAX = 460; // 側條最大寬度，太寬圖會變高、同畫面星點變少
 
 // 期望速率。實際速率會再受圖高限制，見 measureParallax()
 const LAYER_RATE = { second: 0.15, third: 0.08, deep: 0.7 };
@@ -47,27 +46,38 @@ function measureParallax() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const wide = vw > SIDE_BREAKPOINT;
-  const width = wide ? LAYER_WIDTH.wide : LAYER_WIDTH.narrow;
   const maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+
+  // 量實際內容寬度，推算兩側留白；量不到時退回保守值
+  const contentEl = document.querySelector(".about_wrapper");
+  const contentW = contentEl ? contentEl.offsetWidth : Math.min(960, vw);
+  const margin = Math.max(0, (vw - contentW) / 2);
+  const sideW = Math.min(SIDE_MAX, Math.max(SIDE_MIN, margin));
+
+  // 桌機用貼邊側條，平板以下沒有側邊空間，回到原本的置中大圖
+  const px = {
+    second: wide ? sideW : vw * 0.5,
+    third: wide ? sideW : vw * 0.7,
+    deep: vw,
+  };
 
   const rate = {};
   Object.keys(LAYER_RATIO).forEach((key) => {
-    const renderedH = vw * (width[key] / 100) * LAYER_RATIO[key];
-    const spare = renderedH - vh;
+    const spare = px[key] * LAYER_RATIO[key] - vh;
     rate[key] = spare <= 0 ? 0 : Math.min(LAYER_RATE[key], spare / maxScroll);
   });
 
-  parallaxLayout = { wide, rate };
+  parallaxLayout = { wide, rate, sideW: Math.round(sideW), margin: Math.round(margin) };
 
   parallaxEl.style.backgroundSize = [
     "5% auto",
     "3% auto",
-    `${width.second}% auto`,
-    `${width.second}% auto`,
-    `${width.third}% auto`,
-    `${width.third}% auto`,
+    `${Math.round(px.second)}px auto`,
+    `${Math.round(px.second)}px auto`,
+    `${Math.round(px.third)}px auto`,
+    `${Math.round(px.third)}px auto`,
     "80% auto",
-    `${width.deep}% auto`,
+    "100% auto",
   ].join(", ");
 }
 
@@ -90,15 +100,15 @@ function updateParallax() {
   const thirdPos = 0 - scrolled * rate.third;
   const deepPos = 0 - scrolled * rate.deep;
 
-  // 桌機：兩份拷貝分列左右，彼此錯開一點讓速差更容易辨識
+  // 桌機：兩份拷貝貼齊左右邊緣，讓圖上兩道星帶都落在留白處
   // 平板以下：左份回到置中，右份移出畫面
-  const secondL = wide ? `left 2% top ${secondPos}px` : `center ${secondPos}px`;
+  const secondL = wide ? `left 0px top ${secondPos}px` : `center ${secondPos}px`;
   const secondR = wide
-    ? `right 2% top ${secondPos}px`
+    ? `right 0px top ${secondPos}px`
     : `${OFFSCREEN} ${secondPos}px`;
-  const thirdL = wide ? `left 6% top ${thirdPos}px` : `center ${thirdPos}px`;
+  const thirdL = wide ? `left 0px top ${thirdPos}px` : `center ${thirdPos}px`;
   const thirdR = wide
-    ? `right 6% top ${thirdPos}px`
+    ? `right 0px top ${thirdPos}px`
     : `${OFFSCREEN} ${thirdPos}px`;
 
   parallaxEl.style.backgroundPosition = [
