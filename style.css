@@ -132,7 +132,7 @@ body {
    hero 與作品輪播不套用，維持背景原本的亮度。
    想調整濃淡改下面三個變數即可。 */
 :root {
-  --scrim-alpha: 0.55; /* 遮罩濃度：0 = 全透明，1 = 全黑 */
+  --scrim-alpha: 0.3; /* 遮罩濃度：0 = 全透明，1 = 全黑 */
   --scrim-fade-x: 12%; /* 左右淡出寬度 */
   --scrim-fade-y: 90px; /* 上下淡出高度，避免區塊之間出現橫向接縫 */
 }
@@ -1071,7 +1071,7 @@ canvas {
 /* 手機版：畫面窄，遮罩淡出範圍縮小、濃度略提高 */
 @media (max-width: 768px) {
   :root {
-    --scrim-alpha: 0.62;
+    --scrim-alpha: 0.35;
     --scrim-fade-x: 4%;
     --scrim-fade-y: 50px;
   }
