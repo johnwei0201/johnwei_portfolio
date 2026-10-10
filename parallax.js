@@ -218,18 +218,12 @@ window.addEventListener("DOMContentLoaded", () => {
     interval = setInterval(nextSlide, 3000);
   };
   const stopAutoSlide = () => clearInterval(interval);
-  const resetAutoSlide = startAutoSlide;
 
-  if (nextBtn)
-    nextBtn.addEventListener("click", () => {
-      nextSlide();
-      resetAutoSlide();
-    });
-  if (prevBtn)
-    prevBtn.addEventListener("click", () => {
-      prevSlide();
-      resetAutoSlide();
-    });
+  // 按左右箭頭只換圖，刻意不重啟計時器。
+  // 能按到按鈕就代表指標還在輪播區內，此時 pointerenter 已經暫停了，
+  // 要等指標真正離開觸發 pointerleave 才恢復自動輪播。
+  if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+  if (prevBtn) prevBtn.addEventListener("click", prevSlide);
 
   // 無縫切換重置位置
   track.addEventListener("transitionend", () => {
