@@ -212,11 +212,13 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   // 自動輪播控制
-  const startAutoSlide = () => (interval = setInterval(nextSlide, 3000));
-  const resetAutoSlide = () => {
+  // 先 clearInterval 再設定，避免重複呼叫時堆疊出多個計時器
+  const startAutoSlide = () => {
     clearInterval(interval);
-    startAutoSlide();
+    interval = setInterval(nextSlide, 3000);
   };
+  const stopAutoSlide = () => clearInterval(interval);
+  const resetAutoSlide = startAutoSlide;
 
   if (nextBtn)
     nextBtn.addEventListener("click", () => {
@@ -244,8 +246,27 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   startAutoSlide();
-  track.addEventListener("mouseenter", () => clearInterval(interval));
-  track.addEventListener("mouseleave", startAutoSlide);
+
+  // 游標／手指停在輪播上就暫停，移開才繼續。
+  // 掛在 .carousel 而非 .carousel_track，才能連左右箭頭按鈕一起涵蓋
+  // （按鈕是 .carousel 的絕對定位子元素，不在 track 內）。
+  const carouselBox = document.querySelector(".carousel") || track;
+  const isTouch = (e) => e.pointerType !== "mouse";
+
+  // 滑鼠：移入暫停、移出繼續
+  carouselBox.addEventListener("pointerenter", stopAutoSlide);
+  carouselBox.addEventListener("pointerleave", startAutoSlide);
+  carouselBox.addEventListener("pointercancel", startAutoSlide);
+
+  // 觸控：按住暫停、放開繼續。
+  // 觸控指標在 pointerup 後就消失，瀏覽器多半會補送 pointerleave，
+  // 但不是每家都可靠，這裡明確處理，避免手指放開後輪播卡住不動。
+  carouselBox.addEventListener("pointerdown", (e) => {
+    if (isTouch(e)) stopAutoSlide();
+  });
+  carouselBox.addEventListener("pointerup", (e) => {
+    if (isTouch(e)) startAutoSlide();
+  });
 });
 
 /**
