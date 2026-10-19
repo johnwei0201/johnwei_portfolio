@@ -980,6 +980,15 @@ canvas {
     padding: 15px;
   }
 
+  /* RWD：學經歷標題
+     手機版 .about_text 僅約 236px 寬，名稱加括號放不下，
+     瀏覽器會從括號中間斷行（例如「（國際貿易 / 科）」）。
+     改讓括號獨立成一行，斷點固定在名稱與括號之間。 */
+  .job_title {
+    display: block;
+    margin-left: 0;
+  }
+
   /*RWD：技能條排版 */
   .skill_item {
     justify-content: center;
