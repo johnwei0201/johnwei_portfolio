@@ -512,6 +512,9 @@ h1 {
 }
 /* 套在輪播圖上的輪播 */
 .carousel {
+  /* manipulation：保留點擊與捲動，只關掉行動瀏覽器的雙擊縮放，
+     避免連點上一張／下一張時整頁被放大。涵蓋底下的箭頭按鈕與圖片。 */
+  touch-action: manipulation;
   position: absolute;
   top: 19%;
   left: 13%;
@@ -538,6 +541,7 @@ h1 {
 
 /* 輪播圖左右按鈕 */
 .carousel_btn {
+  touch-action: manipulation;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
