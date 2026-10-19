@@ -474,6 +474,18 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* 個人簡介：沿用 .about_block 外框，但沒有 .about_item 的日期欄，
+   段落文字另外對齊 .about_item p 的字級與行高。 */
+.about_intro p {
+  font-size: 20px;
+  line-height: 30px;
+  padding: 0 10px;
+  margin-bottom: 16px;
+}
+.about_intro p:last-child {
+  margin-bottom: 10px;
+}
+
 .about_item {
   display: flex;
   margin-bottom: 20px;
