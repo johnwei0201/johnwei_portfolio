@@ -423,7 +423,9 @@ h1 {
 .skill_item span {
   font-size: 25px;
   width: 120px;
-  padding-right: 145px;
+  /* 170 而非 145：最長的標籤（Javascript）原本距離色條只有 8px，
+     幾乎貼住。拉寬後最小間距為 33px。手機版維持 145，見下方 RWD。 */
+  padding-right: 170px;
   /* 內容區寬度幾乎為 0，含空格的標籤（如 AI Coding）會被拆成兩行，
      導致該列比其他列高。nowrap 讓它與單字標籤一樣維持單行。 */
   white-space: nowrap;
@@ -975,6 +977,7 @@ canvas {
   .skill_item span {
     flex-shrink: 0;
     padding-left: 0;
+    padding-right: 145px; /* 桌機為 170，手機字級較小、沿用原本間距 */
     font-size: 23px;
   }
 
