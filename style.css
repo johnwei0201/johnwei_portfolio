@@ -424,6 +424,9 @@ h1 {
   font-size: 25px;
   width: 120px;
   padding-right: 145px;
+  /* 內容區寬度幾乎為 0，含空格的標籤（如 AI Coding）會被拆成兩行，
+     導致該列比其他列高。nowrap 讓它與單字標籤一樣維持單行。 */
+  white-space: nowrap;
 }
 .skill_item > img {
   width: 60%;
