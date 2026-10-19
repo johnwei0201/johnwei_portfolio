@@ -1010,6 +1010,22 @@ canvas {
   .about_date p {
     font-size: 17px;
   }
+
+  /* RWD：學經歷版面
+     原本是 flex「日期 | 文字」兩欄，內文被夾在右欄、整段往右縮排。
+     改用 grid 並讓 .about_text display: contents，
+     使 h3 與內文成為 grid 的直接項目：
+     第一列維持「日期 + 主副標」，內文則獨立一列、橫跨整個區塊寬度。 */
+  .about_item {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+  }
+  .about_text {
+    display: contents;
+  }
+  .about_text > p {
+    grid-column: 1 / -1;
+  }
   /*RWD：技能條排版 */
   .skill_item {
     justify-content: center;
