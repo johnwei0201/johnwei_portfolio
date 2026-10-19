@@ -512,7 +512,9 @@ h1 {
 }
 .job_title {
   font-size: 20px;
-  margin-left: 3px;
+  /* 9px = 原本 HTML 換行產生的 6px 空白 + 3px margin。
+     空白已從 HTML 移除，改用 margin 明確控制，桌機外觀不變。 */
+  margin-left: 9px;
 }
 
 /* 輪播圖 區塊 */
@@ -978,6 +980,19 @@ canvas {
   .controls button {
     font-size: 24px;
     padding: 15px;
+  }
+
+  /* RWD：學經歷標題
+     手機版 .about_text 只有 236px 寬，原本 22px 標題加 20px 括號會折行，
+     把「（國際貿易科）」拆成兩行。縮為 21 / 15 後，
+     除了最長的「一階廣告股份有限公司」之外都能單行呈現。
+     標題仍比內文 20px 大，且維持粗體。 */
+  .about_text h3 {
+    font-size: 21px;
+  }
+  .job_title {
+    font-size: 15px;
+    margin-left: 0;
   }
 
   /*RWD：技能條排版 */
