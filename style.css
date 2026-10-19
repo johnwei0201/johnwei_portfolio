@@ -981,17 +981,17 @@ canvas {
   }
 
   /* RWD：學經歷標題
-     主標與副標置中；副標寬度足夠時與主標同行，不夠才整塊換行。 */
+     手機版 .about_text 僅約 236px 寬，名稱加括號放不下，
+     瀏覽器會從括號中間斷行（例如「（國際貿易 / 科）」）。
+     改讓括號獨立成一行，斷點固定在名稱與括號之間。 */
   .about_text h3 {
     text-align: center;
   }
   .job_title {
-    /* inline-block + nowrap：放得下就與主標同一行，放不下才整塊換到下一行，
-       不會像一般 inline 那樣從括號中間拆開（例如「（國際貿易 / 科）」）。 */
-    display: inline-block;
-    white-space: nowrap;
-    margin-left: 6px;
-    margin-top: 0;
+    display: block;
+    margin-left: 0;
+    /* body 的 line-height 為 1，兩行會緊貼，補一點間距 */
+    margin-top: 6px;
   }
 
   /* RWD：學經歷版面（三列堆疊）
