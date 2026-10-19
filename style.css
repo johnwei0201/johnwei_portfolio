@@ -994,6 +994,22 @@ canvas {
     margin-top: 6px;
   }
 
+  /* RWD：年份日期欄
+     日期的 <p> 原本繼承 .about_item p 的 20px，「1999/09~」需要 93px，
+     但欄寬僅 25%（約 79px），文字溢出欄外且緊貼左緣，text-align 失效。
+     欄寬加到 92px（再寬會讓「一階廣告股份有限公司」折行），
+     字級降為 17px 讓兩行都能靠右對齊，左側留出約 7px。
+     padding-top 5px 使日期與標題的垂直中心完全對齊。 */
+  .about_date {
+    width: 92px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 6px;
+    padding-top: 5px;
+  }
+  .about_date p {
+    font-size: 17px;
+  }
   /*RWD：技能條排版 */
   .skill_item {
     justify-content: center;
