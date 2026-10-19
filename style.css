@@ -994,40 +994,47 @@ canvas {
     margin-top: 6px;
   }
 
-  /* RWD：年份日期欄
-     日期的 <p> 原本繼承 .about_item p 的 20px，字數偏寬，降為 17px。
-     寬度改為自動，讓它縮到文字寬度、與主副標靠攏置中
-     （兩者間距由 .about_item 的 column-gap 控制）。
-     padding-top 使日期與標題的垂直中心對齊。 */
-  .about_date {
-    width: auto;
-    flex: 0 0 auto;
-    text-align: right;
-    padding-right: 0;
-    padding-top: 5px;
-  }
-  .about_date p {
-    font-size: 17px;
-  }
-
-  /* RWD：學經歷版面
+  /* RWD：學經歷版面（三列堆疊）
      .about_text 設為 display: contents，讓 h3 與內文成為 .about_item
-     的直接子項目，才能把它們分到不同列。
-     用 flex-wrap + justify-content: center：第一列的「日期 + 主副標」
-     各自縮到內容寬度並置中靠攏；內文以 flex-basis 100% 獨佔一列，
-     左右留 14px 內距，不貼齊區塊邊緣。 */
+     的直接 flex 項目；再用 order 把日期排到 h3 之後。
+     每項 flex-basis 100% 各佔一列並置中，順序為：
+       1 公司／學校名（主標，h3 的文字，22px）
+       2 （職稱）（副標，.job_title 以 display:block 另起一行，20px）
+       3 年月份（最小，17px）
+       4 內文
+     row-gap 控制列間距；日期的 <br> 隱藏，讓年月份併成一行。 */
   .about_item {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    column-gap: 12px;
+    row-gap: 8px;
   }
   .about_text {
     display: contents;
   }
+  .about_text h3 {
+    order: 1;
+    flex: 0 0 100%;
+    text-align: center;
+    margin: 0;
+  }
+  .about_date {
+    order: 2;
+    flex: 0 0 100%;
+    width: auto;
+    text-align: center;
+    padding: 0;
+  }
+  .about_date br {
+    display: none;
+  }
+  .about_date p {
+    font-size: 17px;
+  }
   .about_text > p {
+    order: 3;
     flex: 0 0 100%;
     padding: 0 14px;
+    margin-top: 4px;
   }
   /*RWD：技能條排版 */
   .skill_item {
