@@ -1006,7 +1006,7 @@ canvas {
   .about_item {
     display: flex;
     flex-wrap: wrap;
-    row-gap: 8px;
+    row-gap: 4px;
   }
   .about_text {
     display: contents;
@@ -1034,7 +1034,7 @@ canvas {
     order: 3;
     flex: 0 0 100%;
     padding: 0 14px;
-    margin-top: 4px;
+    margin-top: 0;
   }
   /*RWD：技能條排版 */
   .skill_item {
