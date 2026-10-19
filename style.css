@@ -985,7 +985,10 @@ canvas {
      高度由 JS 量測後寫入 inline height，再以 transition 動畫；
      不用 grid-template-rows 0fr/1fr，因為 transition 套在該屬性上
      實測不會跑到終點值（展開後仍停在 0）。 */
-  .about_toggle {
+  /* 選擇器要寫成 .about_block .about_toggle，特異性才蓋得過
+     .about_block h2 的 margin-bottom: 20px；
+     只寫 .about_toggle 會輸，標題在收合時無法垂直置中。 */
+  .about_block .about_toggle {
     cursor: pointer;
     user-select: none;
     margin-bottom: 0;
@@ -998,6 +1001,23 @@ canvas {
   /* 展開後標題與內容之間補回間距（收合時不佔高度） */
   .about_block.is-open .about_toggle {
     margin-bottom: 20px;
+  }
+
+  /* 收合後三個區塊之間、以及與作品區之間的間距縮小約 80%
+     （40 / 40 / 64 -> 8 / 8 / 14）。
+     .about_wrapper 的 gap 也會影響技能條與個人簡介之間的距離，
+     用 .about_intro 的 margin-top 補回原本的 40px。 */
+  .about_wrapper {
+    gap: 8px;
+  }
+  .about_intro {
+    margin-top: 32px;
+  }
+  #about {
+    padding-bottom: 15px;
+  }
+  #portfolio {
+    padding-top: 15px;
   }
 
   /* RWD：學經歷標題
