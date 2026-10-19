@@ -980,6 +980,26 @@ canvas {
     padding: 15px;
   }
 
+  /* RWD：關於我三區塊改為可收合
+     預設只露出標題，點擊標題才展開。
+     高度由 JS 量測後寫入 inline height，再以 transition 動畫；
+     不用 grid-template-rows 0fr/1fr，因為 transition 套在該屬性上
+     實測不會跑到終點值（展開後仍停在 0）。 */
+  .about_toggle {
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0;
+  }
+  .about_panel {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.35s ease;
+  }
+  /* 展開後標題與內容之間補回間距（收合時不佔高度） */
+  .about_block.is-open .about_toggle {
+    margin-bottom: 20px;
+  }
+
   /* RWD：學經歷標題
      手機版 .about_text 僅約 236px 寬，名稱加括號放不下，
      瀏覽器會從括號中間斷行（例如「（國際貿易 / 科）」）。

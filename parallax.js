@@ -388,3 +388,78 @@ window.addEventListener("DOMContentLoaded", () => {
     mobilePlayer.classList.add("active");
   }
 });
+
+/**
+ * =====================================================================
+ * 8. 關於我 - 手機版區塊收合 (About Accordion)
+ * =====================================================================
+ */
+window.addEventListener("DOMContentLoaded", () => {
+  const MOBILE = window.matchMedia("(max-width: 768px)");
+  const toggles = [...document.querySelectorAll(".about_toggle")];
+  if (!toggles.length) return;
+
+  const blocks = toggles
+    .map((t) => t.closest(".about_block"))
+    .filter((b) => b && b.querySelector(".about_panel"));
+
+  // 展開高度以內容實際高度為準，收合為 0；transition 在 CSS 的手機斷點內。
+  function applyHeight(block) {
+    const panel = block.querySelector(".about_panel");
+    const inner = block.querySelector(".about_panel_inner");
+    panel.style.height = block.classList.contains("is-open")
+      ? inner.scrollHeight + "px"
+      : "0px";
+  }
+
+  function setOpen(block, open) {
+    block.classList.toggle("is-open", open);
+    const t = block.querySelector(".about_toggle");
+    if (t) t.setAttribute("aria-expanded", String(open));
+    applyHeight(block);
+  }
+
+  // 桌機不收合：移除 inline height 與無障礙屬性，讓區塊回到原本的自然高度
+  function applyMode() {
+    const mobile = MOBILE.matches;
+    blocks.forEach((block) => {
+      const t = block.querySelector(".about_toggle");
+      const panel = block.querySelector(".about_panel");
+      if (mobile) {
+        t.setAttribute("role", "button");
+        t.setAttribute("tabindex", "0");
+        t.setAttribute("aria-expanded", String(block.classList.contains("is-open")));
+        applyHeight(block);
+      } else {
+        t.removeAttribute("role");
+        t.removeAttribute("tabindex");
+        t.removeAttribute("aria-expanded");
+        block.classList.remove("is-open");
+        panel.style.height = "";
+      }
+    });
+  }
+
+  blocks.forEach((block) => {
+    const t = block.querySelector(".about_toggle");
+    const toggle = () => {
+      if (!MOBILE.matches) return;
+      setOpen(block, !block.classList.contains("is-open"));
+    };
+    t.addEventListener("click", toggle);
+    t.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+
+  applyMode();
+  MOBILE.addEventListener("change", applyMode);
+
+  // resize 一併走 applyMode：跨斷點時清掉 inline height
+  // （部分瀏覽器不會發出 matchMedia 的 change 事件），
+  // 留在手機版時則重新量算已展開區塊的高度。
+  window.addEventListener("resize", applyMode);
+});
