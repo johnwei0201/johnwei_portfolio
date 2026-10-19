@@ -995,16 +995,15 @@ canvas {
   }
 
   /* RWD：年份日期欄
-     日期的 <p> 原本繼承 .about_item p 的 20px，「1999/09~」需要 93px，
-     但欄寬僅 25%（約 79px），文字溢出欄外且緊貼左緣，text-align 失效。
-     欄寬加到 92px（再寬會讓「一階廣告股份有限公司」折行），
-     字級降為 17px 讓兩行都能靠右對齊，左側留出約 7px。
-     padding-top 5px 使日期與標題的垂直中心完全對齊。 */
+     日期的 <p> 原本繼承 .about_item p 的 20px，字數偏寬，降為 17px。
+     寬度改為自動，讓它縮到文字寬度、與主副標靠攏置中
+     （兩者間距由 .about_item 的 column-gap 控制）。
+     padding-top 使日期與標題的垂直中心對齊。 */
   .about_date {
-    width: 92px;
-    flex-shrink: 0;
+    width: auto;
+    flex: 0 0 auto;
     text-align: right;
-    padding-right: 6px;
+    padding-right: 0;
     padding-top: 5px;
   }
   .about_date p {
@@ -1012,19 +1011,23 @@ canvas {
   }
 
   /* RWD：學經歷版面
-     原本是 flex「日期 | 文字」兩欄，內文被夾在右欄、整段往右縮排。
-     改用 grid 並讓 .about_text display: contents，
-     使 h3 與內文成為 grid 的直接項目：
-     第一列維持「日期 + 主副標」，內文則獨立一列、橫跨整個區塊寬度。 */
+     .about_text 設為 display: contents，讓 h3 與內文成為 .about_item
+     的直接子項目，才能把它們分到不同列。
+     用 flex-wrap + justify-content: center：第一列的「日期 + 主副標」
+     各自縮到內容寬度並置中靠攏；內文以 flex-basis 100% 獨佔一列，
+     左右留 14px 內距，不貼齊區塊邊緣。 */
   .about_item {
-    display: grid;
-    grid-template-columns: 92px 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 12px;
   }
   .about_text {
     display: contents;
   }
   .about_text > p {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
+    padding: 0 14px;
   }
   /*RWD：技能條排版 */
   .skill_item {
