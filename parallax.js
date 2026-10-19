@@ -290,9 +290,10 @@ allWorkLinks.forEach((link) => {
     // 平滑捲動至指定區塊
     const target = document.querySelector("#portfolio");
     // 捲動落點。桌機沿用 180；手機版面較短，180 會把街機台上緣連同
-    // 「我的作品」標題推出畫面，改用 0 讓整台完整露出。
+    // 「我的作品」標題推出畫面，改用 -40 讓整台完整露出並留點上緣空間
+    // （街機台上緣落在視窗高度約 8% 處）。
     // 768 為全站 RWD 斷點，與 style.css 的 media query 一致。
-    const offset = window.innerWidth > 768 ? 180 : 0;
+    const offset = window.innerWidth > 768 ? 180 : -40;
     const top =
       target.getBoundingClientRect().top + window.pageYOffset + offset;
 
