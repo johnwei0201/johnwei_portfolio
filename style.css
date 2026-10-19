@@ -1003,21 +1003,18 @@ canvas {
     margin-bottom: 20px;
   }
 
-  /* 收合後三個區塊之間、以及與作品區之間的間距縮小約 80%
-     （40 / 40 / 64 -> 8 / 8 / 14）。
-     .about_wrapper 的 gap 也會影響技能條與個人簡介之間的距離，
-     用 .about_intro 的 margin-top 補回原本的 40px。 */
+  /* 收合後，技能條與三個區塊、以及與作品區之間的間距一律 8px，
+     上下對稱（原為 40 / 8 / 8 / 14）。
+     前三段由 .about_wrapper 的 gap 控制；
+     最後一段為 #about 與 #portfolio 的 padding，各 12px 時剛好等於 8px。 */
   .about_wrapper {
     gap: 8px;
   }
-  .about_intro {
-    margin-top: 32px;
-  }
   #about {
-    padding-bottom: 15px;
+    padding-bottom: 12px;
   }
   #portfolio {
-    padding-top: 15px;
+    padding-top: 12px;
   }
 
   /* RWD：學經歷標題
